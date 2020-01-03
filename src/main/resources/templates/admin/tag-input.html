@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{admin/_fragments::head('新增分类页面')}">
+        
+    </head>
+    <script>
+	    $(document).ready(function(){
+	    	$('.ui.dropdown').dropdown();
+	    	
+	    	$('.ui.form').form({
+		        fields : {
+		        	name: {
+		                identifier :  'name',
+		                rules : [{
+		                    type : 'empty',
+		                    prompt : '请输入分类名称'
+		                }]
+		            }
+		        }
+		    });
+	    });
+	</script>
+    <body>
+        <nav th:replace="~{admin/_fragments::menu(3)}"class="ui inverted attached segment m-padding-tb-mini m-shadow-small">
+            
+        </nav>
+        <div th:replace="~{admin/_fragments::submenu}" class="ui attached pointing menu">
+        </div>
+        <div class="m-container-samll m-padding-tb-large">
+            <div class="ui container">
+                <form th:action="*{id} == null ? @{/admin/tag/save} : @{/admin/tag/update/{id}(id=${id})}" method="post" th:object="${tag}" class="ui form">
+                	<input type="hidden" th:value="*{id}" />
+                    <div class="field">
+                        <div class="ui left labeled input">
+                            <label class="ui compact teal basic label">分类名称</label>
+                            <input type="text" name="name" placeholder="请输入分类名称" th:value="*{name}"/>
+                        </div>
+                    </div>
+                    <div class="ui error message"></div>
+                    <div class="ui negative message" th:if="${#fields.hasErrors('name')}">
+                    	<i class="close icon"></i>
+                    	<div class="header">验证失败</div>
+                    	<p th:errors="*{name}">提交信息不符合规则</p>
+                    </div>
+                    <div class="ui container right aligned">
+                        <button class="ui button" onclick="window.history.go(-1)">返回</button>
+                        <button class="ui teal submit button">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <footer th:replace="~{admin/_fragments::footer}">
+        </footer>
+    <body>
+</html>
+

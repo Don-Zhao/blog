@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+	<head th:fragment="head(title)">
+        <title th:text="${title}">博客</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+        <link rel="stylesheet" href="../static/css/common.css" th:href="@{/../css/common.css}">
+        <link rel="stylesheet" href="../static/css/typo.css" th:href="@{/../css/typo.css}">
+        <link rel="stylesheet" href="../static/css/animate.css" th:href="@{/../css/animate.css}">
+        <link rel="stylesheet" href="../static/prism/prism.css" th:href="@{/../prism/prism.css}">
+        <link rel="stylesheet" href="../static/tocbot/tocbot.css" th:href="@{/../tocbot/tocbot.css}">
+        <link rel="stylesheet" href="../../static/editormd/css/editormd.css" th:href="@{/../editormd/css/editormd.css}">
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js" th:src="@{/../js/jquery.min.js}"></script>
+        <script src="../static/prism/prism.js" th:src="@{/../prism/prism.js}"></script>
+        <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+        <script src="../static/tocbot/tocbot.min.js" th:src="@{/../tocbot/tocbot.min.js}"></script>
+        <script src="../static/js/qrcode.min.js" th:src="@{/../js/qrcode.min.js}"></script>
+        <script src="../static/js/jquery-scrollto.js" th:src="@{/../js/jquery-scrollto.js}"></script>
+        <script src="../static/js/jquery.waypoints.min.js" th:src="@{/../js/jquery.waypoints.min.js}"></script>
+        <script src="../../static/editormd/editormd.min.js" th:src="@{/../editormd/editormd.min.js}"></script>
+    </head>
+	<body>
+		<nav th:fragment="menu(n)" class="ui inverted attached segment m-padding-tb-mini m-shadow-small">
+            <div class="ui container">
+                <div class="ui inverted secondary stackable menu">
+                    <h2 class="ui teal header item">博客后台管理</h2>
+                    <a th:href="@{/admin/blogs}" class="item m-mobile-hide m-item" th:classappend="${n==1} ? 'active'"><i class="mini home icon"></i>首页</a>
+                    <a th:href="@{/admin/type/list}" class="item m-mobile-hide m-item" th:classappend="${n==2} ? 'active'"><i class="mini idea icon"></i>分类</a>
+                    <a th:href="@{/admin/tag/list}" class="item m-mobile-hide m-item" th:classappend="${n==3} ? 'active'"><i class="mini tags icon"></i>标签</a>
+                    <div class="right m-item m-mobile-hide menu">
+                        <div class="ui dropdown item">
+                            <div class="text">
+                                <img class="ui mini avatar image" th:src="${session.user.avator}">
+                                <label th:text="${session.user.nickname}"></label>
+                            </div>
+                            <i class="ui dropdown icon"></i>
+                            <div class="menu">
+                                <a th:href="@{/admin/logout}" class="ui item">退出</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="ui menu toggle black icon button m-right-top m-mobile-show">
+                <i class="sidebar icon"></i>
+            </a>
+        </nav>
+        
+        <div th:fragment="submenu" class="ui attached pointing menu">
+            <div class="ui container">
+                <div class="right menu">
+                    <a href="#" class="item">发布</a>
+                    <a href="#" class="active teal item">列表</a>
+                </div>
+            </div>
+        </div>
+        
+        <footer th:fragment="footer" class="ui vertical center aligned inverted segment m-padding-tb-tiny">
+        	<!--  
+            <div class="ui center aligned container">
+                <div class="ui inverted divided stackable grid">
+                    <div class="three wide column">
+                        <div class="ui inverted link list">
+                            <div class="ui small image">
+                                <img th:src="@{/images/qrcode.png}" style="width: 80px; height=80px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="three wide column">
+                        <div class="ui inverted link list">
+                            <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                            <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                            <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                            <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                        </div>
+                    </div>
+                    <div class="three wide column">
+                        <div class="ui inverted link list">
+                            <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                            <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                            <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                            <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                        </div>
+                    </div>
+                    <div class="seven wide column">
+                        <div class="ui inverted list">
+                            <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                            <p>
+                                杩欐槸鎴戠殑涓汉鍗氬锛屼細鍒嗕韩鍏充簬缂栫▼锛屽啓浣滐紝鎬濊�冪浉鍏崇殑浠讳綍鍐呭锛�
+                                甯屾湜鍙互缁欐潵杩欓噷鐨勪汉鏈夋墍甯姪...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui section divider"></div>
+            -->
+            <div class="ui center aligned m-opacity-tiny">
+                &copy;赵嘉鸿版权所有
+            </div>
+        </footer>
+	</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="~{_fragments::head('错误页面')}">
+		<meta charset="UTF-8">
+		<title>错误页面</title>
+	</head>
+	<body>
+		<div class="ui container m-padding-tb-massive">
+        	<div class="ui center error message">
+        		<h1>错误</h1>
+        	</div>
+        	<div class="ui center error message">
+				<div th:text="|Failed request URL: ${url}|"></div>
+				<div th:text="|Exception message: ${exception.message}|"></div>
+				<div th:text="'&lt;!--'"></div>
+				<ul>
+					<li th:each="st : ${exception.stackTrace}" th:remove="tag">
+						<span th:text="${st}" th:remove="tag"></span>
+					</li>
+				</ul>
+				<div th:text="'--&gt;'"></div>
+        	</div>
+        </div>
+	</body>
+</html>

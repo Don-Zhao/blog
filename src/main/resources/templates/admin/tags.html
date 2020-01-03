@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{admin/_fragments::head('博客管理页面')}">
+        <title>博客管理页面</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+        <link rel="stylesheet" href="../../static/css/common.css">
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+    </head>
+    <script>
+    	$(document).ready(function(){
+	   		$(".menu.toggle").click(function(){
+	            $(".m-item").toggleClass('m-mobile-hide');
+	        });
+	
+	        $('.ui.dropdown').dropdown();	
+    	});
+         
+     </script>
+    <body>
+        <nav th:replace="~{admin/_fragments::menu(3)}"class="ui inverted attached segment m-padding-tb-mini m-shadow-small">
+            <div class="ui container">
+                <div class="ui inverted secondary stackable menu">
+                    <h2 class="ui teal header item">绠＄悊鍚庡彴</h2>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini home icon"></i>鍗氬</a>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini idea icon"></i>鍒嗙被</a>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini tags icon"></i>鏍囩</a>
+                    <div class="right m-item m-mobile-hide menu">
+                        <div class="ui dropdown item">
+                            <div class="text">
+                                <img class="ui mini avatar image" src="../../static/images/about.jpg">
+                                璧靛槈楦�
+                            </div>
+                            <i class="ui dropdown icon"></i>
+                            <div class="menu">
+                                <a href="#" class="ui item">閫�鍑�</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="ui menu toggle black icon button m-right-top m-mobile-show">
+                <i class="sidebar icon"></i>
+            </a>
+        </nav>
+        <div th:replace="~{admin/_fragments::submenu}" class="ui attached pointing menu">
+            <div class="ui container">
+                <div class="right menu">
+                    <a href="#" class="item">鍙戝竷</a>
+                    <a href="#" class="active teal item">鍒楄〃</a>
+                </div>
+            </div>
+        </div>
+        <div class="m-container-samll m-padding-tb-large">
+            <div class="ui container">
+            	
+            	<div class="ui sccuess message" th:if="${message} != null">
+                 	<i class="close icon"></i>
+                 	<div class="header">验证成功</div>
+                 	<p th:text="${message}">提交信息不符合规则</p>
+                 </div>
+                    
+                <table class="ui celled table">
+                    <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>分类名称</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="tag, iterStat: ${tags.content}">
+                            <td th:text="${iterStat.count}">1</td>
+                            <td th:text="${tag.name}">刻意练习清单</td>
+                            <td>
+                                <a th:href="@{/admin/tag/{id}/update(id=${tag.id})}" class="ui mini teal basic button">编辑</a>
+                                <a th:href="@{/admin/tag/del/{id}(id=${tag.id})}" href="#" class="ui mini red basic button">删除</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="6">
+                                <div class="ui  pagination menu" th:if="${tags.totalPages} > 1">
+                                    <a th:if="${!tags.first}" th:href="@{/admin/tag/list(page=${tags.number} - 1)}" class="item">上一页</a>
+                                    <a th:if="${!tags.last}" th:href="@{/admin/tag/list(page=${tags.number} + 1)}" class="item">下一页</a>
+                                </div>
+                                <a th:href="@{/admin/tag/add}" class="ui right floated mini teal basic button">新增</a>
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <footer th:replace="~{admin/_fragments::footer}">
+            <div class="ui vertical inverted segment m-padding-tb-massive">
+                <div class="ui center aligned container">
+                    <div class="ui inverted divided stackable grid">
+                        <div class="three wide column">
+                            <div class="ui inverted link list">
+                                <div class="ui small image">
+                                    <img src="../../static/images/qrcode.png" style="width: 80px; height=80px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="three wide column">
+                            <div class="ui inverted link list">
+                                <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                            </div>
+                        </div>
+                        <div class="three wide column">
+                            <div class="ui inverted link list">
+                                <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                            </div>
+                        </div>
+                        <div class="seven wide column">
+                            <div class="ui inverted list">
+                                <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                                <p>
+                                    杩欐槸鎴戠殑涓汉鍗氬锛屼細鍒嗕韩鍏充簬缂栫▼锛屽啓浣滐紝鎬濊�冪浉鍏崇殑浠讳綍鍐呭锛�
+                                    甯屾湜鍙互缁欐潵杩欓噷鐨勪汉鏈夋墍甯姪...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui section divider"></div>
+            <div class="ui center aligned m-opacity-tiny">
+                Semantic UI 鏈�缁堢増鏉冨綊鍘熺綉绔欐墍鏈夛細www.semantic-ui.com
+            </div>
+        </footer>
+    <body>
+</html>

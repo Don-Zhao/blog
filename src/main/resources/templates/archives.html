@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{_fragments::head('归档')}">
+        <title>褰掓。</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+        <link rel="stylesheet" href="../static/css/common.css">
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+    </head>
+    <script>
+    	$(document).ready(function(){
+    		$(".menu.toggle").click(function(){
+                $(".m-item").toggleClass('m-mobile-hide');
+            });
+    	});
+    </script>
+    <body>
+        <nav th:replace="~{_fragments::menu(4)}" class="ui inverted attached segment m-padding-tb-mini">
+            <div class="ui container">
+                <div class="ui inverted secondary stackable menu">
+                    <h2 class="ui teal header item">Blog</h2>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini home icon"></i>棣栭〉</a>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini idea icon"></i>鍒嗙被</a>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini tags icon"></i>鏍囩</a>
+                    <a href="#" class="active item m-mobile-hide m-item"><i class="mini clone icon"></i>褰掓。</a>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini info icon"></i>鍏充簬鎴�</a>
+                    <div class="right item m-mobile-hide m-item">
+                        <div class="ui  icon input inverted  right item ">
+                                <input class="prompt" type="text" placeholder="Search animals...">
+                                <i class="search icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="ui menu toggle black icon button m-right-top m-mobile-show">
+                <i class="sidebar icon"></i>
+            </a>
+        </nav>
+        <div class="m-container-samll m-padding-tb-large">
+            <div class="ui container">
+                <div class="ui top attached padded segment">
+                    <div class="ui midde aligned two column grid">
+                        <div class="column midde aligned">
+                            <h3 class="ui teal header">归档</h3>
+                        </div>
+                        <div class="right aligned column ">
+							共<h2 class="ui orange header m-inline-block" th:text="${totalCount}">14</h2>篇博客
+                        </div>
+                    </div>
+                </div>
+                <th:block th:each="item : ${archives}">
+	                <h2 class="ui center aligned header" th:text="${item.key}">2017</h2>
+	                <div class="ui fluid vertical menu">
+	                    <a th:href="@{/blog/{id}(id=${blog.id})}" class="item" th:each="blog : ${item.value}">
+	                        <span>
+	                            <i class="mini teal circle icon"></i><span th:text="${blog.title}">瀛︿範鏃ュ織</span>
+	                            <div class="ui teal basic left pointing label m-padding-tb-mini" th:text="${#dates.format(blog.createTime, 'MM月dd日')}">10鏈�10鏃�</div>
+	                        </span>
+	                        <div class="ui orange basic left pointing label m-padding-tb-mini" th:text="${blog.flag}">鍘熷垱</div>
+	                    </a>
+	                </div>
+                </th:block>
+            </div>
+        </div>
+        <footer th:replace="~{_fragments::footer}">
+            <div class="ui vertical inverted segment m-padding-tb-massive">
+                <div class="ui center aligned container">
+                    <div class="ui inverted divided stackable grid">
+                        <div class="three wide column">
+                            <div class="ui inverted link list">
+                                <div class="ui small image">
+                                    <img src="../static/images/qrcode.png" style="width: 80px; height=80px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="three wide column">
+                            <div class="ui inverted link list">
+                                <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                            </div>
+                        </div>
+                        <div class="three wide column">
+                            <div class="ui inverted link list">
+                                <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                            </div>
+                        </div>
+                        <div class="seven wide column">
+                            <div class="ui inverted list">
+                                <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                                <p>
+                                    杩欐槸鎴戠殑涓汉鍗氬锛屼細鍒嗕韩鍏充簬缂栫▼锛屽啓浣滐紝鎬濊�冪浉鍏崇殑浠讳綍鍐呭锛�
+                                    甯屾湜鍙互缁欐潵杩欓噷鐨勪汉鏈夋墍甯姪...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui section divider"></div>
+            <div class="ui center aligned m-opacity-tiny">
+                Semantic UI 鏈�缁堢増鏉冨綊鍘熺綉绔欐墍鏈夛細www.semantic-ui.com
+            </div>
+        </footer>
+    <body>
+</html>

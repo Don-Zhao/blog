@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{_fragments::head('博客详情')}">
+        <title>鍗氬璇︽儏</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+        <link rel="stylesheet" href="../static/css/common.css">
+        <link rel="stylesheet" href="../static/css/typo.css">
+        <link rel="stylesheet" href="../static/css/animate.css">
+        <link rel="stylesheet" href="../static/prism/prism.css">
+        <link rel="stylesheet" href="../static/tocbot/tocbot.css">
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="../static/prism/prism.js"></script>
+        <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+        <script src="../static/tocbot/tocbot.min.js"></script>
+        <script src="../static/js/qrcode.min.js"></script>
+        <script src="../static/js/jquery-scrollto.js"></script>
+        <script src="../static/js/jquery.waypoints.min.js"></script>
+    </head>
+    <script th:inline="javascript">
+       	$(document).ready(function(){
+       		tocbot.init({
+                // Where to render the table of contents.
+                tocSelector: '.js-toc',
+                // Where to grab the headings to build the table of contents.
+                contentSelector: '.main-content',
+                // Which headings to grab inside of the contentSelector element.
+                headingSelector: 'h1, h2, h3',
+                // For headings inside relative or absolute positioned containers within content.
+                hasInnerContainers: true,
+            });
+
+       		var baseUrl = /*[[#{baseUrl}]]*/"http://localhost:8080";
+       		var url = /*[[@{/blog/{id}(id=${id})}]]*/"index";
+            var qrcode = new QRCode("qrcode", {
+                text: baseUrl + url,
+                width: 120,
+                height: 120,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            $(function () {
+            	$("#comment-container").load(/*[[@{/comments/{blogId}(blogId=${blog.id})}]]*/"comments/6");
+            });
+            
+            $(".menu.toggle").click(function(){
+                $(".m-item").toggleClass('m-mobile-hide');
+            });
+
+            $("#payButton").popup({
+                popup: $('.payQ.popup'),
+                on: 'click',
+                position: 'bottom center'
+            });
+
+            $(".toc-btn").popup({
+                popup: $('.toc-container.popup'),
+                on: 'click',
+                position: 'left center'
+            });
+
+            $('.wechatbtn').popup({
+                popup: $('.wechatqr'),
+                position: 'left center'
+            });
+
+            $("#up-btn").click(function(){
+                $(window).scrollTop(0, 1000);
+            });
+
+            var waypoint = new Waypoint({
+                  element: document.getElementById('main'),
+                  handler: function(direction) {
+                    if (direction == "down"){
+                        $("#bottom-menu").show(500);
+                    } else {
+                        $("#bottom-menu").hide(500);
+                    }
+                  }
+            });
+            
+            $(".ui.form").form({
+        	   	fields : {
+        	   		cotent: {
+		                identifier :  'cotent',
+		                rules : [{
+		                    type : 'empty',
+		                    prompt : '评论不能为空'
+		                }]
+		            },
+		            nickname: {
+		                identifier :  'nickname',
+		                rules : [{
+		                    type : 'empty',
+		                    prompt : '用户昵称不能为空'
+		                }]
+		            },
+		            email: {
+		                identifier :  'email',
+		                rules : [{
+		                    type : 'email',
+		                    prompt : '邮件必须为正确的格式'
+		                }]
+		            }
+        	   	}
+            });
+            
+            $("#commentBtn").click(function() {
+            	var check = $(".ui.form").form("validate form");
+            	if (check) {
+            		postData();
+            	} else {
+            		console.log("效验失败");
+            	}
+            });
+            
+            
+       	});
+       	
+       	
+       	function postData() {
+        	$("#comment-container").load(/*[[@{/comments}]]*/"", {
+        		"parent.id" : $("[name='parent.id']").val(),
+        		"blog.id" : $("[name='blog.id']").val(),
+        		"nickname" : $("[name='nickname']").val(),
+        		"email" : $("[name='email']").val(),
+        		"cotent" : $("[name='cotent']").val()
+        	}, function(responseTxt, statusTxt, xhr){
+        		clearContent();
+        		console.log("clear");
+        		$(window).scrollTo($('#comment-container'), 500);
+        	});
+        }
+        
+        function clearContent() {
+        	$("[name='cotent']").val("");
+        	//$("[name='email']").val("");
+        	//$("[name='nickname']").val("");
+        	$("[name='parent.id']").val(-1);
+        	$("[name='cotent']").attr("placeholder", "请输入评论信息...");
+        }
+        
+        function reply(obj) {
+        	var commentId = $(obj).data('commentid');
+        	var nickname = $(obj).data('commentnickname');
+        	
+        	$("[name='cotent']").attr("placeholder", "@" + nickname).focus();
+        	$("[name='parent.id']").val(commentId);
+        	$(window).scrollTo($('#commentreply'), 500);
+        }
+    </script>
+    <body>
+        <nav th:replace="~{_fragments::menu(1)}" class="ui inverted attached segment m-padding-tb-mini">
+            <div class="ui container">
+                <div class="ui inverted secondary stackable menu">
+                    <h2 class="ui teal header item">Blog</h2>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini home icon"></i>棣栭〉</a>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini idea icon"></i>鍒嗙被</a>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini tags icon"></i>鏍囩</a>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini clone icon"></i>褰掓。</a>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini info icon"></i>鍏充簬鎴�</a>
+                    <div class="right item m-mobile-hide m-item">
+                        <div class="ui  icon input inverted  right item ">
+                                <input class="prompt" type="text" placeholder="Search animals...">
+                                <i class="search icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="ui menu toggle black icon button m-right-top m-mobile-show">
+                <i class="sidebar icon"></i>
+            </a>
+        </nav>
+        <div class="m-container-samll m-padding-tb-large animated fadeIn" id="main" th:object="${blog}">
+            <div class="ui container">
+                <div class="ui top attached segment">
+                    <div class="ui horizontal link list">
+                        <div class="ui item">
+                            <img th:src="${blog.user.avator}" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576781570193&di=09bcf48cadec950f480492e061063585&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201811%2F20%2F20181120201929_oitqg.jpg" class="ui avatar image" />
+                            <div class="content"><a href="#" class="header" th:text="${blog.user.nickname}">璧靛槈楦�</a></div>
+                        </div>
+                        <div class="ui item">
+                            <i class="calendar icon"></i><label th:text="${#dates.format(blog.updateTime, 'yyyy/MM/dd')}">2017-10-02</label>
+                        </div>
+                        <div class="ui item">
+                            <i class="eye icon"></i><label th:text="${blog.views}">1234</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui attached padded segment">
+                    <img class="ui fluid rounded image" src="../static/images/top.jpg" th:src="${blog.picture}"/>
+                </div>
+                <div class="ui attached segment">
+                    <div class="ui right aligned basic segment">
+                        <div class="ui orange basic label" th:text="${blog.flag}">原创</div>
+                    </div>
+                    <h2 class="ui centered aligned header" th:text="${blog.title}">鍏充簬鍒绘剰缁冧範鐨勬竻鍗�</h2>
+                    <div id="content" class="typo typo-selection m-padded-lr main-content" th:utext="${blog.content}">
+                        <ol id="ui table">
+                          <li><a href="#section1">鍏充簬 <i class="serif">Typo.css</i></a></li>
+                          <li><a href="#section2">鎺掔増瀹炰緥</a>
+                            <ul>
+                              <li><a href="#section2-1">渚�1锛氳璇鑰岀瘒绗竴</a></li>
+                              <li><a href="#section2-2">渚�2锛氳嫳鏂囨帓鐗�</a></li>
+                            </ul>
+                          </li>
+                          <li><a href="#section3">闄勫綍</a>
+                            <ul>
+                              <li><a href="#appendix1"><i class="serif">Typo.css</i> 鎺掔増鍋忛噸鐐�</a></li>
+                              <li><a href="#appendix2">寮�婧愯鍙�</a></li>
+                            </ul>
+                          </li>
+                        </ol>
+
+                        <h2 id="section1">涓�銆佸叧浜� <i class="serif">Typo.css</i></h2>
+                        <h3 id="section2">涓�銆佸叧浜� <i class="serif">Typo.css</i></h3>
+                        <h2 id="section3">涓�銆佸叧浜� <i class="serif">Typo.css</i></h2>
+                        <h3 id="section4">涓�銆佸叧浜� <i class="serif">Typo.css</i></h3>
+
+                        <p><i class="serif">Typo.css</i> 鐨勭洰鐨勬槸锛屽湪涓�鑷村寲娴忚鍣ㄦ帓鐗堟晥鏋滅殑鍚屾椂锛屾瀯寤烘渶閫傚悎涓枃闃呰鐨勭綉椤垫帓鐗堛��</p>
+                        <h4 id="selection4">鐜扮姸鍜屽浣曞幓鍋氾細</h4>
+
+                        <p class="typo-first">鎺掔増鏄竴涓夯鐑︾殑闂 <sup><a href="#appendix1"># 闄勫綍涓�</a></sup>锛岄渶瑕佺簿蹇冭璁★紝鑰岃繖涓璁″嵈鏄父琚瑙夎璁″笀鎵�蹇界暐鐨勩�傚墠绔伐绋嬪笀鏇村父鐪嬪埌杩欐牱鐨勯棶棰橈紝浣嗕笉渚垮彉鏇淬�傚洜涓哄湪澶氫釜 OS 涓殑涓嶅悓娴忚鍣ㄦ覆鏌撲笉鍚岋紝鏀瑰姩闇�瑕佸鐨勬椂闂村仛鍥炲綊娴嬭瘯锛屾墍浠ユ敼鍙樺彉寰楁洿鍥伴毦銆傝�屽儚鎴戜滑涓�鑸娇鐢ㄧ殑
+                          Yahoo銆丒ric Meyer 鍜� Alice base.css 涓噰鐢ㄧ殑 Reset 閮芥病鏈夊緢濂藉湴鑰冭檻涓枃鎺掔増銆�<i class="serif">Typo.css</i> 瑕佸仛鐨勫氨鏄В鍐充腑鏂囨帓鐗堢殑闂銆�</p>
+
+                        <p><strong><i class="serif">Typo.css</i> 娴嬭瘯浜庡涓嬪钩鍙帮細</strong></p>
+                        <pre><code class="language-css">p { color: red }</code></pre>
+                        <table class="ui table"summary="Typo.css 鐨勬祴璇曞钩鍙板垪琛�" style="font-size: 0.8em !important;">
+                          <thead>
+                          <tr>
+                            <th>OS/娴忚鍣�</th>
+                            <th>Firefox</th>
+                            <th>Chrome</th>
+                            <th>Safari</th>
+                            <th>Opera</th>
+                            <th>IE9</th>
+                            <th>IE8</th>
+                            <th>IE7</th>
+                            <th>IE6</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr>
+                            <td>OS X</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                          </tr>
+                          <tr>
+                            <td>Win 7</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>-</td>
+                          </tr>
+                          <tr>
+                            <td>Win XP</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>-</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                          </tr>
+                          <tr>
+                            <td>Ubuntu</td>
+                            <td>鉁�</td>
+                            <td>鉁�</td>
+                            <td>-</td>
+                            <td>鉁�</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                          </tr>
+                          </tbody>
+                        </table>
+
+                        <h4 id="selection5">涓枃鎺掔増鐨勯噸鐐瑰拰闅剧偣</h4>
+
+                        <p>鍦ㄤ腑鏂囨帓鐗堜腑锛孒TML4 鐨勫緢澶氭爣鍑嗗湪璇箟鍦ㄩ兘鏈夌収椤惧埌銆備絾浠庤瑙夋晥鏋滀笂锛屽嵈寰堥毦鍒╃敤鍗曠嫭鐨� CSS 鏉ュ疄鐜帮紝鍍�<abbr title="鍦ㄦ枃瀛椾笅澶氬姞涓�涓偣">鐫�閲嶅彿</abbr>锛堜緥锛氳繖閲�<em class="typo-em">寮鸿皟涓�涓�</em>锛夈�傚湪 HTML4 涓紝涓撳悕鍙锋爣绛撅紙<code>&lt;u&gt;</code>锛夊凡缁忚鏀惧純锛岃��
+                          HTML5 琚�<a href="http://html5doctor.com/u-element/">閲嶆柊鎻愯捣</a>銆�<i class="serif">Typo.css</i> 涔熸牴鎹疄闄呮儏鍐垫彁渚涚浉搴旂殑鏂规銆傛垜浠噸瑕佽娉ㄦ剰鐨勪袱鐐规槸锛�</p>
+                        <ol>
+                          <li>璇箟锛氳涔夊搴旂殑鐢ㄦ硶鍜屾牱寮忔槸鍚︿笌涓枃鎺掔増涓�鑷�</li>
+                          <li>琛ㄧ幇锛氬湪鍚勬祻瑙堝櫒涓殑瀛椾綋銆佸ぇ灏忓拰缂╂斁鏄惁濡傛帓鐗堥鏈�</li>
+                        </ol>
+                        <p>瀵逛簬杩欎簺锛�<i class="serif">Typo.css</i> 鎺掔増椤圭洰鐨勪腑鏂囧亸閲嶆敞鎰忕偣锛岄兘娣诲姞鍦ㄩ檮褰曚腑锛岃瑙侊細</p>
+                        <blockquote>
+                          <b>闄勫綍涓�</b>锛�<a href="#appendix1"><i class="serif">Typo.css</i> 鎺掔増鍋忛噸鐐�</a>
+                        </blockquote>
+
+                        <p>鐩墠宸叉湁鍍忕櫨濮撶綉绛夊叏闈娇鐢� <i class="serif">Typo.css</i> 鐨勯」鐩紝娴嬭瘯骞冲彴鐨勮鐩栵紝鐗瑰埆鏄湪<abbr title="鎵嬫満銆佸钩鏉跨數鑴戠瓑绉诲姩骞冲彴">绉诲姩绔�</abbr>涓婅繕娌℃湁瑕嗙洊瀹屼富娴佸钩鍙帮紝甯屾湜鏈夎兘鍔涚殑鍚屽鑳藉姞鍏ユ祴璇曡鍒楋紝鎴栬�呭姞鍏ュ埌 <i class="serif">Typo.css</i>
+                          鐨勫紑鍙戙�傚姞鍏ユ柟娉曪細<a href="https://github.com/sofish/Typo.css">鍙備笌 <i class="serif">Typo.css</i> 寮�鍙�</a>銆傚鏈夋壒璇勩�佸缓璁拰鎰忚锛屼篃闅忔椂娆㈣繋缁欏湪 Github 鐩存帴鎻� <a
+                            href="https://github.com/sofish/Typo.css/issues">issues</a>锛屾垨缁�<abbr title="Sofish Lin, author of Typo.css"
+                                                                                                role="author">鎴�</abbr>鍙�<a
+                            href="mailto:sofish@icloud.com">閭欢</a>銆�</p>
+                    </div>
+                    <div class="m-padded-lr" style="margin-top: 1.2em !important;">
+                        <div class="ui basic label teal left pointing" th:each="tag: ${blog.tags}" th:text="${tag.name}">鏂规硶璁�</div>
+                    </div>
+                    <div class="ui center aligned segment basic " th:if="${blog.appreciation}">
+                        <button id="payButton" class="ui basic orange circular button">赞赏</button>
+                    </div>
+                    <div class="ui payQ flowing popup top left hidden" th:if="${blog.appreciation}">
+                        <div class="ui orange basic label">
+                            <div class="ui images" style="font-size: inherit !important;">
+                                <div class="image">
+                                    <img th:src="@{/images/qrcode.png}" class="ui rounded bordered image" />
+                                    <div>微信支付</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui attached positive message" th:if="${blog.shareStatement}">
+                    <div class="ui middle aligned grid">
+                        <div class="eleven wide column">
+                            <ui class="list">
+                                <li>作者：<span th:text="${blog.user.nickname}">浣滆�咃細璧靛槈楦匡紙鑱旂郴浣滆�咃級</span></li>
+                                <li>发表时间：<label th:text="${#dates.format(blog.createTime, 'yyyy-MM-dd HH:ss')}">2019-12-24 22:18</label></li>
+                                <li>版权声明：自由转载-非商用-非衍生-保持署名（创意共享3.0许可证）</li>
+                                <li>公众号转载：请在文末加上作者公众号二维码</li>
+                            </ui>
+                        </div>
+                        <div class="five wide column">
+                            <img class="ui rounded bordered image right floated m-image-normal" th:src="@{/images/qrcode.png}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="ui bottom attached segment" th:if="${blog.commentEnabled}">
+                	<div th:fragment="commentList" id="comment-container">
+	                    <div class="ui teal segment">
+	                        <div class="ui comments">
+	                            <h3 class="ui dividing header">Comments</h3>
+	                            <div class="comment" th:each="comment: ${comments}">
+	                                <a class="avatar comment-image">
+	                                    <img th:src="@{${comment.avatar}}">
+	                                </a>
+	                                <div class="content">
+	                                    <span class="author" th:text="${comment.nickname}">Matt</span>
+	                                    <div th:if="${comment.adminComment}" class="div ui mini basic teal left pointing label m-padding-tb-mini">博主</div>
+	                                    <div class="metadata">
+	                                        <span class="date" th:text="${#dates.format(comment.createTime, 'yyyy-MM-dd HH:mm')}">Today at 5:42PM</span>
+	                                    </div>
+	                                    <div class="text" th:text="${comment.cotent}">
+	                                        How artistic!
+	                                    </div>
+	                                    <div class="actions">
+	                                        <a class="reply" th:attr="data-commentid=${comment.id},data-commentnickname=${comment.nickname}" onclick="reply(this)">回复</a>
+	                                    </div>
+	                                </div>
+	                                <div class="comments" th:if="${comment.replaies.size() > 0}">
+	                                    <div class="comment" th:each="replay : ${comment.replaies}">
+	                                        <a class="avatar comment-image">
+	                                            <img th:src="@{${replay.avatar}}">
+	                                        </a>
+	                                        <div class="content">
+	                                            <span class="author" th:text="${replay.nickname}">Jenny Hess</span>
+	                                            <div class="div ui mini basic teal left pointing label m-padding-tb-mini" th:if="${replay.adminComment}" >博主</div>
+	                                            <span style="color: blue;">@</span><span th:text="${replay.parent.nickname}"></span>
+	                                            <div class="div ui mini basic teal left pointing label m-padding-tb-mini" th:if="${replay.parent.adminComment}" >博主</div>
+	                                            <div class="metadata">
+	                                                <span class="date" th:text="${#dates.format(replay.createTime, 'yyyy-MM-dd HH:mm')}">Just now</span>
+	                                            </div>
+	                                            <div class="text" th:text="${replay.cotent}">
+	                                                Elliot you are always so right :)
+	                                            </div>
+	                                            <div class="actions">
+	                                                <a class="reply" th:attr="data-commentid=${replay.id},data-commentnickname=${replay.nickname}" onclick="reply(this)">回复</a>
+	                                            </div>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <!--
+	                            <div class="comment">
+	                                <a class="avatar comment-image">
+	                                    <img th:src="@{/images/elliot.jpg}">
+	                                </a>
+	                                <div class="content">
+	                                    <a class="author">Elliot Fu</a>
+	                                    <div class="metadata">
+	                                        <span class="date">Yesterday at 12:30AM</span>
+	                                    </div>
+	                                    <div class="text">
+	                                        <p>This has been very useful for my research. Thanks as well!</p>
+	                                    </div>
+	                                    <div class="actions">
+	                                        <a class="reply">回复</a>
+	                                    </div>
+	                                </div>
+	                                <div class="comments">
+	                                    <div class="comment">
+	                                        <a class="avatar comment-image">
+	                                            <img th:src="@{/images/elliot.jpg}">
+	                                        </a>
+	                                        <div class="content">
+	                                            <a class="author">Jenny Hess</a>
+	                                            <div class="metadata">
+	                                                <span class="date">Just now</span>
+	                                            </div>
+	                                            <div class="text">
+	                                                Elliot you are always so right :)
+	                                            </div>
+	                                            <div class="actions">
+	                                                <a class="reply">回复</a>
+	                                            </div>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <div class="comment">
+	                                <a class="avatar comment-image">
+	                                    <img th:src="@{/images/elliot.jpg}">
+	                                </a>
+	                                <div class="content">
+	                                    <a class="author">Joe Henderson</a>
+	                                    <div class="metadata">
+	                                        <span class="date">5 days ago</span>
+	                                    </div>
+	                                    <div class="text">
+	                                        Dude, this is awesome. Thanks so much
+	                                    </div>
+	                                    <div class="actions">
+	                                        <a class="reply">回复</a>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        	-->
+	                        </div>
+	                    </div>
+                    </div>
+                    <div class="ui form" id="commentreply">
+                    	<input type="hidden" th:value="${blog.id}" name="blog.id" />
+                    	<input type="hidden" th:value="-1" name="parent.id" />
+                        <div class="field">
+                            <textarea placeholder="请输入评论....." name="cotent" id="cotent"></textarea>
+                        </div>
+                        <div class="fields">
+                            <div class="field m-mobile-width m-mobile-margin-bottom">
+                                <div class="ui left icon input">
+                                    <i class="user icon"></i>
+                                    <input type="text" placeholder="用户昵称" name="nickname" th:value="${session.user} == null ? '' : ${session.user.nickname}"/>
+                                </div>
+                            </div>
+                            <div class="field m-mobile-width m-mobile-margin-bottom">
+                                <div class="ui left icon input">
+                                    <i class="mail icon"></i>
+                                    <input type="text" placeholder="邮件" name="email" th:value="${session.user} == null ? '' : ${session.user.email}"/>
+                                </div>
+                            </div>
+                            <div class="field m-mobile-width m-mobile-margin-bottom">
+                                <button type="button" id="commentBtn" class="ui teal button m-mobile-width">
+                                    <i class="edit icon"></i>发布
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="bottom-menu" class="m-padded-tiny m-fixed m-right-bottom" style="display: none;">
+            <div class="ui vertical icon buttons">
+                <button class="ui toc-btn teal button">目录</button>
+                <a href="#comment-container" class="ui teal button">评论</a>
+                <button class="ui wechatbtn icon button"><i class="weixin icon"></i></button>
+                <div id="up-btn" class="ui icon button up-btn"><i class="chevron up icon"></i></div>
+            </div>
+        </div>
+        <div class="ui toc-container flowing popup top left hidden" style="width: 250px !important;">
+            <ol class="js-toc"></ol>
+        </div>
+        <div class="ui wechatqr flowing popup transition hidden" style="width: 130px;">
+        	<div id="qrcode" class="ui small image" style="widht:120px;"></div>
+        </div>
+        <footer th:replace="~{_fragments::footer}">
+            <div class="ui vertical inverted segment m-padding-tb-massive">
+                <div class="ui center aligned container">
+                    <div class="ui inverted divided stackable grid">
+                        <div class="three wide column">
+                            <div class="ui inverted link list">
+                                <div id="qrcode" class="ui small image">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="three wide column">
+                            <div class="ui inverted link list">
+                                <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                            </div>
+                        </div>
+                        <div class="three wide column">
+                            <div class="ui inverted link list">
+                                <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                            </div>
+                        </div>
+                        <div class="seven wide column">
+                            <div class="ui inverted list">
+                                <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                                <p>
+                                    杩欐槸鎴戠殑涓汉鍗氬锛屼細鍒嗕韩鍏充簬缂栫▼锛屽啓浣滐紝鎬濊�冪浉鍏崇殑浠讳綍鍐呭锛�
+                                    甯屾湜鍙互缁欐潵杩欓噷鐨勪汉鏈夋墍甯姪...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui section divider"></div>
+            <div class="ui center aligned m-opacity-tiny">
+                Semantic UI 鏈�缁堢増鏉冨綊鍘熺綉绔欐墍鏈夛細www.semantic-ui.com
+            </div>
+        </footer>
+
+    <body>
+</html>

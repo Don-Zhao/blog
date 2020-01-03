@@ -1,0 +1,63 @@
+spring:
+  profiles:
+    active: dev
+
+---
+
+# database
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/blog?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: admin
+
+# env
+  profiles: dev
+  
+# jpa
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
+
+# log
+logging:
+  level:
+    root: info
+    com.zjh.blog: debug
+  file: D:/log/logs/blog/log.log
+
+comment:
+  avator: /images/avator.jpg
+
+---
+
+# database
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/blog?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: admin
+
+# jpa
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
+
+# env
+  profiles: pro
+  
+# log
+logging:
+  level:
+    root: warn
+    com.zjh.blog: info
+  file: D:/log/logs/blog/blog.log
+
+comment:
+  avator: /images/avator.jpg

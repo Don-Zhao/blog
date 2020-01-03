@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{_fragments::head('分类')}">
+        <title>鍒嗙被</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+        <link rel="stylesheet" href="../static/css/common.css">
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+    </head>
+    <body>
+        <nav th:replace="~{_fragments::menu(2)}" class="ui inverted attached segment m-padding-tb-mini">
+            <div class="ui container">
+                <div class="ui inverted secondary stackable menu">
+                    <h2 class="ui teal header item">Blog</h2>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini home icon"></i>棣栭〉</a>
+                    <a href="#" class="active item m-mobile-hide m-item"><i class="mini idea icon"></i>鍒嗙被</a>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini tags icon"></i>鏍囩</a>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini clone icon"></i>褰掓。</a>
+                    <a href="#" class="item m-mobile-hide m-item"><i class="mini info icon"></i>鍏充簬鎴�</a>
+                    <div class="right item m-mobile-hide m-item">
+                        <div class="ui  icon input inverted  right item ">
+                                <input class="prompt" type="text" placeholder="Search animals...">
+                                <i class="search icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="#" class="ui menu toggle black icon button m-right-top m-mobile-show">
+                <i class="sidebar icon"></i>
+            </a>
+        </nav>
+        <div class="m-container-samll m-padding-tb-large">
+            <div class="ui container">
+                <div class="ui top attached segment">
+                    <div class="ui midde aligned two column grid">
+                        <div class="column midde aligned">
+                            <h3 class="ui teal header">分类</h3>
+                        </div>
+                        <div class="right aligned column ">
+							共<h2 class="ui orange header m-inline-block" th:text="${types.size()}">14</h2>个
+                        </div>
+                    </div>
+                </div>
+                <div class="ui attached segment">
+                    <div class="ui labeled button m-margin-tb-tiny" th:each="type : ${types}" >
+                        <a th:href="@{/types/{id}(id=${type.id})}" href="#" class="ui basic button" th:text="${type.name}" th:classappend="${type.id} == ${activeTypeId} ? teal">思考与感情</a>
+                        <div class="ui basic left pointing label" th:text="${type.blogs.size()}" th:classappend="${type.id} == ${activeTypeId} ? teal">24</div>
+                    </div>
+                </div>
+                <div class="ui top attached teal segment">
+                    <div class="ui padded  vertical m-padding-tb-large segment" th:each="blog : ${blogs}">
+                        <div class="ui mobile reversed stackable grid">
+                            <div class="eleven wide column">
+                                <h3 class="ui header">
+                                	<a th:href="@{/blog/{id}(id=${blog.id})}" th:text="${blog.title}">杩欐槸涓�绡囧崥瀹�</a></h3>
+                                <p th:text="${blog.description}">
+                                    杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃
+                                    杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃
+                                    杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃
+                                    杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃杩欐槸鍗氭枃......
+                                </p>
+                                <div class="ui grid">
+                                    <div class="eleven wide column">
+                                        <div class="ui horizontal link list">
+                                            <div class="ui item">
+                                                <img th:src="@{${blog.user.avator}}" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576781570193&di=09bcf48cadec950f480492e061063585&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201811%2F20%2F20181120201929_oitqg.jpg" class="ui avatar image" />
+                                                <div class="content"><a href="#" class="header" th:text="${blog.user.nickname}">璧靛槈楦�</a></div>
+                                            </div>
+                                            <div class="ui item">
+                                                <i class="calendar icon"></i><span th:text="${#dates.format(blog.createTime, 'yyyy-MM-dd')}"></span>
+                                            </div>
+                                            <div class="ui item">
+                                                <i class="eye icon"></i><span th:text="${blog.views}">1234</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="five wide column right aligned small">
+                                        <div class="ui label">
+											<span th:text="${blog.type.name}">璁ょ煡鍗囩骇</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="five wide center column">
+                                <a th:href="@{/blog/{id}(id=${blog.id})}" targer="_blank">
+                                    <div class="ui small image">
+                                        <img th:src="@{${blog.picture}}" src="../static/images/qrcode.png" style="width: 800px; height=400px;">
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui bottom attached segment" th:if="${blogs.totalPages > 1}">
+                    <div class="ui two column grid">
+                        <div class="column">
+                            <a th:href="@{/types/{id}(id=${activeTypeId},page=${blogs.number} - 1)}" th:unless="${blogs.first}" class="ui positive basic button">上一页</a>
+                        </div>
+                        <div class="right aligned column">
+                            <a th:href="@{/types/{id}(id=${activeTypeId},page=${blogs.number} + 1)}" th:unless="${blogs.last}" class="ui positive basic button">下一页</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer th:replace="~{_fragments::footer}">
+            <div class="ui vertical inverted segment m-padding-tb-massive">
+                <div class="ui center aligned container">
+                    <div class="ui inverted divided stackable grid">
+                        <div class="three wide column">
+                            <div class="ui inverted link list">
+                                <div class="ui small image">
+                                    <img src="../static/images/qrcode.png" style="width: 80px; height=80px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="three wide column">
+                            <div class="ui inverted link list">
+                                <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                            </div>
+                        </div>
+                        <div class="three wide column">
+                            <div class="ui inverted link list">
+                                <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                                <a href="#" class="item">鐢ㄦ埛鏁呬簨锛坲ser histroy锛�</a>
+                            </div>
+                        </div>
+                        <div class="seven wide column">
+                            <div class="ui inverted list">
+                                <h4 class="ui inverted header">鏈�鏂板崥瀹�</h4>
+                                <p>
+                                    杩欐槸鎴戠殑涓汉鍗氬锛屼細鍒嗕韩鍏充簬缂栫▼锛屽啓浣滐紝鎬濊�冪浉鍏崇殑浠讳綍鍐呭锛�
+                                    甯屾湜鍙互缁欐潵杩欓噷鐨勪汉鏈夋墍甯姪...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui section divider"></div>
+            <div class="ui center aligned m-opacity-tiny">
+                Semantic UI 鏈�缁堢増鏉冨綊鍘熺綉绔欐墍鏈夛細www.semantic-ui.com
+            </div>
+        </footer>
+        <script>
+            $(".menu.toggle").click(function(){
+                $(".m-item").toggleClass('m-mobile-hide');
+            });
+        </script>
+    <body>
+</html>
